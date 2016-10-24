@@ -110,5 +110,20 @@ class FunSetSuite extends FunSuite {
     }
   }
 
+  test("map") {
+    new TestSets {
+      val s = union(union(s1, s2), s3)
+
+      printSet(s)
+
+      def f(x: Int) = x - 1
+
+      val mapSet: Set = map(s, f)
+      printSet(mapSet)
+
+    }
+
+  }
+
 
 }
