@@ -225,7 +225,7 @@ object Huffman {
     */
   def convert(tree: CodeTree): CodeTable = tree match {
     case Leaf(char, _) => List((char, List()))
-    case Fork(left, right, chars, weight) => mergeCodeTables(convert(left), convert(right))
+    case Fork(left, right, _, _) => mergeCodeTables(convert(left), convert(right))
   }
 
   /**
@@ -233,7 +233,12 @@ object Huffman {
     * use it in the `convert` method above, this merge method might also do some transformations
     * on the two parameter code tables.
     */
-  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = ???
+  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = {
+    def prefix(bit: Int, p: (Char, List[Bit])): (Char, List[Bit]) = p match {
+      case (c, bits) => (c, bit :: bits)
+    }
+    a.map(prefix(0, _)) ::: b.map(prefix(1, _))
+  }
 
   /**
     * This function encodes `text` according to the code tree `tree`.
@@ -241,7 +246,7 @@ object Huffman {
     * To speed up the encoding process, it first converts the code tree to a code table
     * and then uses it to perform the actual encoding.
     */
-  def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = text.flatMap(codeBits(convert(tree))(_))
 
   def main(args: Array[String]): Unit = {
     println(decodedSecret.mkString)
